@@ -1,51 +1,40 @@
-import { Schema, model, Document } from 'mongoose';
-import { reactionSchema, IReaction } from './Reaction'; // Import Reaction schema
+import { Schema, model } from 'mongoose';
+import { reactionSchema } from './Reaction'; // Import the reaction schema
 
-// Define the interface for the Thought model
-interface IThought extends Document {
-  thoughtText: string;
-  createdAt: Date;
-  username: string;
-  reactions: IReaction[];
-  reactionCount: number;
-}
-
-// Create the Thought schema
-const thoughtSchema = new Schema<IThought>(
+// Define the Thought Schema
+const thoughtSchema = new Schema(
   {
     thoughtText: {
       type: String,
       required: true,
-      maxlength: 280, // Maximum length of 280 characters
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now, // Default to current timestamp
+      minlength: 1,
+      maxlength: 280,
     },
     username: {
       type: String,
-      required: true,
+      required: true, // Tracks who created the thought
     },
-    reactions: [reactionSchema], // Embed the Reaction schema as an array
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (timestamp: number) => new Date(timestamp).toLocaleString(), // Format the date
+    },
+    reactions: [reactionSchema], // Use the reactionSchema for reactions
   },
   {
     toJSON: {
-      getters: true, // Enable getters to format the createdAt timestamp
-      virtuals: true, // Include virtuals in the returned JSON
+      virtuals: true, // Enable virtuals (e.g., reaction count)
+      getters: true, // Enable date formatting
     },
-    id: false, // Don't include `id` field by default
+    id: false, // Don't include the `id` field by default
   }
 );
 
-// Add a getter for the createdAt field to format it on query
-thoughtSchema.path('createdAt').get(function(this: IThought) {
-  return this.createdAt.toISOString(); // Return the ISO string representation of the date
-});
-
-// Virtual property for reaction count
-thoughtSchema.virtual('reactionCount').get(function (this: IThought) {
+// Virtual field for reaction count
+thoughtSchema.virtual('reactionCount').get(function () {
   return this.reactions.length;
 });
 
 // Export the Thought model
-export const Thought = model<IThought>('Thought', thoughtSchema);
+const Thought = model('Thought', thoughtSchema);
+export default Thought;
