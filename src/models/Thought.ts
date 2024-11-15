@@ -17,14 +17,13 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      get: (timestamp: number) => new Date(timestamp).toLocaleString(), // Format the date
     },
     reactions: [reactionSchema], // Use the reactionSchema for reactions
   },
   {
     toJSON: {
       virtuals: true, // Enable virtuals (e.g., reaction count)
-      getters: true, // Enable date formatting
+      // getters: true, // Remove this line to avoid applying getters
     },
     id: false, // Don't include the `id` field by default
   }

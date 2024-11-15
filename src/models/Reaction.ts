@@ -31,7 +31,7 @@ const reactionSchema = new Schema<IReaction>(
   },
   {
     toJSON: {
-      getters: true, // Enable getters to format the createdAt timestamp
+      virtuals: true, // Include virtual properties when data is requested
     },
     id: false, // Don't include `id` field by default
   }
