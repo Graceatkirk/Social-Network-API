@@ -1,6 +1,5 @@
 import { Schema, Types } from 'mongoose';
 
-// Define the Reaction interface
 interface IReaction {
   reactionId: Types.ObjectId;
   reactionBody: string;
@@ -8,17 +7,16 @@ interface IReaction {
   createdAt: Date;
 }
 
-// Define the reactionSchema
 const reactionSchema = new Schema<IReaction>(
   {
     reactionId: {
       type: Schema.Types.ObjectId,
-      default: () => new Types.ObjectId(), // Default to a new ObjectId
+      default: () => new Types.ObjectId(), 
     },
     reactionBody: {
       type: String,
       required: true,
-      maxlength: 280, // Maximum length for reaction body
+      maxlength: 280, 
     },
     username: {
       type: String,
@@ -26,21 +24,19 @@ const reactionSchema = new Schema<IReaction>(
     },
     createdAt: {
       type: Date,
-      default: Date.now, // Default to the current timestamp
+      default: Date.now, 
     },
   },
   {
     toJSON: {
-      virtuals: true, // Include virtual properties when data is requested
+      virtuals: true, 
     },
-    id: false, // Don't include `id` field by default
+    id: false, 
   }
 );
 
-// Add a getter to format createdAt as an ISO string
 reactionSchema.path('createdAt').get(function(this: IReaction) {
-  return this.createdAt.toISOString(); // Return the ISO string representation of the date
+  return this.createdAt.toISOString(); 
 });
 
-// Export the Reaction schema (no need to export as a model, since it’s used in Thought)
 export { reactionSchema, IReaction };
